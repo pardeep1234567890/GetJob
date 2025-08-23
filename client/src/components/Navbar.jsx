@@ -10,13 +10,13 @@ function Navbar() {
     return (
         <div className='shadow py-4'>
             <div className='container flex justify-between items-center mx-auto px-4 2xl:px-20'>
-                <img className='size-1/12' src={assets.logo} alt="logo" />
+                <img className='size-3/12 sm:size-2/12 md:size-1/12' src={assets.logo} alt="logo" />
                 {
                     user ?
                         <div className='flex items-center gap-3'>
                             <Link to='/applications'>Applied Jobs</Link>
                             <p>|</p>
-                            <p>Hii, {user.fullName}</p>
+                            <p className='max-sm:hidden'>Hii, {user.fullName}</p>
                             <UserButton />
                         </div>
                         :

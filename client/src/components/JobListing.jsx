@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { use, useContext, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import { assets, JobCategories, JobLocations } from '../assets/assets';
 import JobCard from './JobCard';
@@ -10,6 +10,14 @@ function JobListing() {
 
   // Here we define the state for pagination
   const [currentPage, setCurrentPage] = useState(1)
+
+  const [selectedCategories , setSelectedCategories] =useState([])
+  const [selectedLocations , setSelectedLocations] =useState([])
+  const [filteredJobs,setFilteredJobs] = useState(jobs)
+
+  const handleCategoryChange = (category)=>{
+
+  }
 
   return (
     <div className='container 2xl:px-20 mx-auto flex flex-col lg:flex-row max-lg:space-y-8 py-8'>
@@ -50,7 +58,10 @@ function JobListing() {
             {
               JobCategories.map((category, index) => (
                 <li className='flex gap-3 items-center' key={index}>    {/* we use key here because the react needs a unique key prop for each element in a list to efficiently track and update element */}
-                  <input className='scale-125' type="checkbox" name="" id="" />
+                  <input 
+                  className='scale-125' 
+                  type="checkbox" 
+                  onChange={handleCategoryChange} />
                   {category}
                 </li>
               ))
@@ -90,8 +101,9 @@ function JobListing() {
             <a href="#job-list">
               <img onClick={()=>setCurrentPage(Math.max(currentPage-1),1)} src={assets.left_arrow_icon} alt="" />
             </a>
+            {/*Create an array for making pages or pagination and map function is used to iterate over the array and create the buttons , we used '_' because of make it blank */}
             {Array.from({ length: Math.ceil(jobs.length/6) }).map((_, index) => (
-              <a href='#job-list'>
+              <a href='#job-list'> {/*In this context, <a href="#job-list"> acts as a link that, when clicked, will cause the page to scroll or focus to the element on the page that has the ID "job-list". It's used to navigate to a specific section of the page. */}
                 <button onClick={()=>setCurrentPage(index+1)} className={` w-10 h-10 border flex items-center justify-center border-gray-300 rounded ${ currentPage===index+1 ?'bg-blue-100 text-blue-500':'text-gray-500'}`}>
                   {index + 1}</button>
               </a>

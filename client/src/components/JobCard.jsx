@@ -16,8 +16,8 @@ return (
       </div>
       <p className='text-gray-500 text-sm mt-4' dangerouslySetInnerHTML={{__html:job.description.slice(0,150)}}></p> {/*dangerouslySetInnerHTML: it is used because if there is html element inside the html element so we have to tell explicitely  */}
       <div className='mt-4 flex gap-4 text-sm'>
-        <button onClick={()=>navigate(`/apply-job/${job._id}`)} className='border bg-blue-600 px-4 py-2 rounded text-white'>Apply now</button>
-        <button onClick={()=>navigate(`/apply-job/${job._id}`)} className='border border-gray-500 text-gray-500 px-4 py-2 rounded'>Learn more</button>
+        <button onClick={()=>{navigate(`/apply-job/${job._id}`); scrollTo(0,0)}} className='border bg-blue-600 px-4 py-2 rounded text-white'>Apply now</button>
+        <button onClick={()=>{navigate(`/apply-job/${job._id}`); scrollTo(0,0)}} className='border border-gray-500 text-gray-500 px-4 py-2 rounded'>Learn more</button>
       </div>
     </div>
   )

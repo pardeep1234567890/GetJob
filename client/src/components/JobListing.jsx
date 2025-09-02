@@ -128,7 +128,7 @@ function JobListing() {
             </a>
             {/*Create an array for making pages or pagination and map function is used to iterate over the array and create the buttons , we used '_' because of make it blank */}
             {Array.from({ length: Math.ceil(filteredJobs.length / 6) }).map((_, index) => (
-              <a href='#job-list'> {/*In this context, <a href="#job-list"> acts as a link that, when clicked, will cause the page to scroll or focus to the element on the page that has the ID "job-list". It's used to navigate to a specific section of the page. */}
+              <a key={index} href='#job-list'> {/*In this context, <a href="#job-list"> acts as a link that, when clicked, will cause the page to scroll or focus to the element on the page that has the ID "job-list". It's used to navigate to a specific section of the page. */}
                 <button onClick={() => setCurrentPage(index + 1)} className={` w-10 h-10 border flex items-center justify-center border-gray-300 rounded ${currentPage === index + 1 ? 'bg-blue-100 text-blue-500' : 'text-gray-500'}`}>
                   {index + 1}</button>
               </a>

@@ -12,6 +12,8 @@ export const AppContextProvider = (props)=>{
      })
      const[isSearched,setIsSearched] = useState(false);
      const[jobs , setJobs] = useState([]);
+     // we create a state to show the Pop up 
+     const[ showRecuriterLogin, setShowRecuriterLogin] = useState(false)
 
      // making a function to fetch the Jobs 
      const fetchJobs = async()=>{
@@ -22,7 +24,7 @@ export const AppContextProvider = (props)=>{
      },[])
 
     const value = {
-        searchFilter,setSearchFilter,isSearched,setIsSearched,jobs ,setJobs
+        searchFilter,setSearchFilter,isSearched,setIsSearched,jobs ,setJobs,showRecuriterLogin, setShowRecuriterLogin
     }
     return(
         <AppContext.Provider value={value}>

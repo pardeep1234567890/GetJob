@@ -1,9 +1,15 @@
+import "./config/instrument.js"
 import express from "express"
 import dotenv from "dotenv/config"
 import cors from "cors"
+import connectDB from "./config/db.js"
+import * as Sentry from "@sentry/node";
 
 // Initialize Express
 const app = express()
+
+//Connect to database 
+await connectDB();
 
 //Initialize the Middlewares
 app.use(cors())
@@ -13,9 +19,14 @@ app.use(express.json())
 app.get("/",(req,res)=>{
     res.send("API is running")
  });
+ app.get("/debug-sentry", function mainHandler(req,res){
+    throw new Error("My first sentry error!");
+ });
 
 // PORT 
 const PORT = process.env.PORT || 3000
+Sentry.setupExpressErrorHandler(app);
+
 app.listen(PORT,()=>{
-    console.log(`THe port is running on ${PORT}`)
+    console.log(`The port is running on ${PORT}`)
 })

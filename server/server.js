@@ -7,6 +7,9 @@ import * as Sentry from "@sentry/node";
 import { clerkWebhooks } from "./controllers/webhooks.js"
 import companyRoutes from "./routes/company.route.js"
 import connectCloudinary from "./config/cloudinary.js"
+import jobRoutes from "./routes/job.route.js"
+import userRoutes from "./routes/user.route.js"
+import {clerkMiddleware} from "@clerk/express"
 
 // Initialize Express
 const app = express()
@@ -18,22 +21,24 @@ await connectCloudinary();
 //Initialize the Middlewares
 app.use(cors())
 app.use(express.json())
+app.use(clerkMiddleware())
 
 // Routes
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
     res.send("API is running")
- });
- app.get("/debug-sentry", function mainHandler(req,res){
+});
+app.get("/debug-sentry", function mainHandler(req, res) {
     throw new Error("My first sentry error!");
- });
- app.post("/webhooks",clerkWebhooks)
- app.use("/api/company",companyRoutes)
-
+});
+app.post("/webhooks", clerkWebhooks)
+app.use("/api/company", companyRoutes)
+app.use("/api/jobs", jobRoutes)
+app.use("/api/users",userRoutes)
 // PORT 
 const PORT = process.env.PORT || 3000
 
 Sentry.setupExpressErrorHandler(app);
 
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
     console.log(`The port is running on ${PORT}`)
 })

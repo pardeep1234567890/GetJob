@@ -38,4 +38,4 @@ const JobSchema = new mongoose.Schema({
         required: true,
     },
 })
-export const Job = mongoose.model("Job", JobSchema)
+export const PostJob = mongoose.model("PostJob", JobSchema)

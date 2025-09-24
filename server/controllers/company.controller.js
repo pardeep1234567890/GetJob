@@ -2,8 +2,7 @@ import Company from "../models/Company.model.js";
 import bcrypt, { hash } from "bcrypt"
 import { v2 as cloudinary } from "cloudinary";
 import { generateToken } from "../utils/generateToken.js";
-import { messageInRaw } from "svix";
-import { Job } from "../models/postJob.js";
+import { PostJob } from "../models/postJob.model.js";
 
 // Register a new company 
 export const registerCompany = async (req, res) => {
@@ -73,7 +72,7 @@ export const loginCompany = async (req, res) => {
     try {
         const company = await Company.findOne({ email })
 
-        if (bcrypt.compare(password, company.password)) {
+        if (await bcrypt.compare(password, company.password)) {
             res.json({
                 success: true,
                 company: {
@@ -102,7 +101,13 @@ export const loginCompany = async (req, res) => {
 
 // Get company Data
 export const getCompanyData = async (req, res) => {
-
+    try {
+        const company = req.company
+        res.json({ success: true, company })
+        
+    } catch (error) {
+        res.json({ success: false, message: error.message })
+    }
 }
 
 // Post a new Job 
@@ -112,7 +117,7 @@ export const postJob = async (req, res) => {
 
         try {
             // i want to know about where to use "_id" and where "id"
-            const newJob = new Job({
+            const newJob = new PostJob({
                 title,
                 description,
                 location,
@@ -140,7 +145,16 @@ export const getCompanyJobApplicants = async (req, res) => {
 
 // Get Company Posted Job 
 export const getCompanyPostedJobs = async (req, res) => {
+            try {
+                const companyId = req.company._id
+                const jobs = await PostJob.find({companyId})
 
+                //add no. of applicants info in data
+
+                res.json({success:true , jobsData:jobs})
+            } catch (error) {
+                res.json({success:false, message:error.message})
+            }
 }
 
 // Change job application status
@@ -150,5 +164,20 @@ export const changeJobApplicationsStatus = async (req, res) => {
 
 // Change Job visibility 
 export const changeVisibility = async (req, res) => {
+
+    try {
+        const {id} = req.body;
+        const companyId = req.company._id
+        const job = await PostJob.findById(id)
+        if (companyId.toString() === job.companyId.toString()) {
+            job.visible = !job.visible
+        }
+        await job.save()
+        res.json({success:true,job})
+    } catch (error) {
+        res.json({success:false,message:error.message})
+    }
+
+        const changeVisible = await PostJob.findById({id},{visible:false}) 
 
 }

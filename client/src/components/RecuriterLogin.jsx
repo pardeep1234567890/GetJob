@@ -1,9 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { assets } from '../assets/assets';
 import { AppContext } from '../context/AppContext';
+import axios from "axios"
+import {useNavigate} from "react-router-dom"
+import { toast } from 'react-toastify';
 
 function RecuriterLogin() {
 
+    const navigate = useNavigate()
     // We create the state to manage pop-up
     const [state, setState] = useState('Login')
     const [name, setName] = useState('');
@@ -11,7 +15,7 @@ function RecuriterLogin() {
     const [email, setEmail] = useState('');
     const [image, setImage] = useState(false)
     const [isTextDataSubmited, setIsTextDataSubmited] = useState(false)
-    const { setShowRecuriterLogin } = useContext(AppContext);
+    const { setShowRecuriterLogin,backend_url,setCompanyData,setCompanyToken} = useContext(AppContext);
 
  // Till now this is switch mode in b/w sign up page ,the onSubmitHandler is called first time when we click the 'next' 
  // and then the isTextSubmitted is become true but after upload the image, the second time when the
@@ -21,6 +25,23 @@ function RecuriterLogin() {
         e.preventDefault()
         if (state == 'Sign Up' && !isTextDataSubmited) {
             setIsTextDataSubmited(true)
+        }
+        try {
+            if (state === "Login") {
+                const {data}= await axios.post(backend_url+"/api/company/login",{email,password})
+            if (data.success) {
+                console.log(data)
+                setCompanyData(data.company)
+                setCompanyToken(data.token)
+                localStorage.setItem("companyToken",data.token)
+                setShowRecuriterLogin(false)
+                navigate("/dashboard")
+            }else{
+                toast.error(data.message)
+            }
+            }
+        } catch (error) {
+            
         }
     }
     useEffect(() => {

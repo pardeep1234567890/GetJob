@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { assets } from '../assets/assets';
 import { AppContext } from '../context/AppContext';
 import axios from "axios"
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { toast } from 'react-toastify';
 
 function RecuriterLogin() {
@@ -15,33 +15,51 @@ function RecuriterLogin() {
     const [email, setEmail] = useState('');
     const [image, setImage] = useState(false)
     const [isTextDataSubmited, setIsTextDataSubmited] = useState(false)
-    const { setShowRecuriterLogin,backend_url,setCompanyData,setCompanyToken} = useContext(AppContext);
+    const { setShowRecuriterLogin, backend_url, setCompanyData, setCompanyToken } = useContext(AppContext);
 
- // Till now this is switch mode in b/w sign up page ,the onSubmitHandler is called first time when we click the 'next' 
- // and then the isTextSubmitted is become true but after upload the image, the second time when the
- // onSUbmitHandler is called the if statement false and now we submit the data   
+    // Till now this is switch mode in b/w sign up page ,the onSubmitHandler is called first time when we click the 'next' 
+    // and then the isTextSubmitted is become true but after upload the image, the second time when the
+    // onSUbmitHandler is called the if statement false and now we submit the data   
 
     const onSubmitHandler = async (e) => {
         e.preventDefault()
-        if (state == 'Sign Up' && !isTextDataSubmited) {
-            setIsTextDataSubmited(true)
+        if (state == 'Sign Up' && !isTextDataSubmited) {     //means user is on the Sign-Up page and text is submitted   
+            return setIsTextDataSubmited(true)
         }
         try {
             if (state === "Login") {
-                const {data}= await axios.post(backend_url+"/api/company/login",{email,password})
-            if (data.success) {
-                console.log(data)
-                setCompanyData(data.company)
-                setCompanyToken(data.token)
-                localStorage.setItem("companyToken",data.token)
-                setShowRecuriterLogin(false)
-                navigate("/dashboard")
-            }else{
-                toast.error(data.message)
-            }
+                const { data } = await axios.post(backend_url + "/api/company/login", { email, password })
+                if (data.success) {
+                    setCompanyData(data.company)
+                    setCompanyToken(data.token)
+                    localStorage.setItem("companyToken", data.token)
+                    setShowRecuriterLogin(false)
+                    navigate("/dashboard")
+                } else {
+                    toast.error(data.message)
+                }
+            } else {
+                const formData = new FormData() // Here we use FromData to send the image 
+
+                formData.append("name", name)
+                formData.append("password", password)
+                formData.append("email", email)
+                formData.append("image", image)
+
+                const { data } = await axios.post(backend_url + "/api/company/register", formData)
+
+                if (data.success) {
+                    setCompanyData(data.company)
+                    setCompanyToken(data.token)
+                    localStorage.setItem("companyToken", data.token)
+                    setShowRecuriterLogin(false)
+                    navigate("/dashboard")
+                } else {
+                    toast.error(data.message)
+                }
             }
         } catch (error) {
-            
+            toast.error(error.message)
         }
     }
     useEffect(() => {

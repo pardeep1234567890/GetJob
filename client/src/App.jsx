@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Route,Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import Home from './pages/Home'
 import Applyjob from './pages/Applyjob'
 import Applications from './pages/Applications'
@@ -14,22 +14,25 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-  const {showRecuriterLogin} = useContext(AppContext);
+  const { showRecuriterLogin, companyToken } = useContext(AppContext);
   return (
-       <div> 
-        {showRecuriterLogin && <RecuriterLogin/>} 
-        <ToastContainer/>
-       <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/apply-job/:id' element={<Applyjob/>}/>
-        <Route path='/applications' element={<Applications/>}/>
-        <Route path='/dashboard' element={<Dashboard/>}>
-        <Route path='add-job' element={<AddJob/>}/>
-        <Route path='manage-jobs' element={<ManageJob/>}/>
-        <Route path='view-applications' element={<ViewApplications/>}/>
+    <div>
+      {showRecuriterLogin && <RecuriterLogin />}
+      <ToastContainer />
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/apply-job/:id' element={<Applyjob />} />
+        <Route path='/applications' element={<Applications />} />
+        <Route path='/dashboard' element={<Dashboard />}>
+          {companyToken ?
+            <>
+              <Route path='add-job' element={<AddJob />} />
+              <Route path='manage-jobs' element={<ManageJob />} />
+              <Route path='view-applications' element={<ViewApplications />} />
+            </> : null}
         </Route>
-       </Routes>
-      </div>       
+      </Routes>
+    </div>
   )
 }
 

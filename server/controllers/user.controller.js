@@ -47,7 +47,7 @@ export const applyForJobs = async (req, res) => {
     }
 }
 
-//Get user applied application
+//Get user applied application (the jobs on which the user applied)
 export const getUserJobApplications = async (req, res) => {
 
     try {

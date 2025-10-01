@@ -5,7 +5,7 @@ import { PostJob } from "../models/postJob.model.js"
 export const getJobs = async (req, res) => {
     try {
         const jobs = await PostJob.find({ visible: true })
-            .populate({ path: "companyId", select: "-password" })
+            .populate({ path: "companyId", select: "-password" }) //With populate, it replaces that ID with the actual company document data
 
         res.json({ success: true, jobs })
     } catch (error) {

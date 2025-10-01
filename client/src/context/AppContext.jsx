@@ -23,21 +23,37 @@ export const AppContextProvider = (props) => {
     const [companyToken, setCompanyToken] = useState(null)
     const [companyData, setCompanyData] = useState(null)
 
+    // Here we create the state to store the user data
+    const [userData , setUserData] = useState(null)
+    const [userApplications , setUserApplications] = useState([])
+
     // making a function to fetch the Jobs 
     const fetchJobs = async () => {
-        setJobs(jobsData)
+         try {
+            const { data } = await axios.get(backend_url + "/api/jobs")
+            if (data.success) {
+                setJobs(data.jobs)
+                console.log(data.jobs)
+            } else {
+                toast.error(data.message)
+            }
+
+        } catch (error) {
+            toast.error(error.message)
+        }
     }
 
-    // Here we define a function to get/fetch the Jobs
-    const fetchCompanyData = async ()=>{
+
+    // Here we define a function to get/fetch the Company Data
+    const fetchCompanyData = async () => {
         try {
-            const {data} = await axios.get(backend_url+"/api/company/company",{headers:{token:companyToken}})
-            
+            const { data } = await axios.get(backend_url + "/api/company/company", { headers: { token: companyToken } })
+
             if (data.success) {
                 setCompanyData(data.company)
                 console.log(data)
             }
-            else{
+            else {
                 toast.error(data.message)
             }
         } catch (error) {
@@ -48,16 +64,16 @@ export const AppContextProvider = (props) => {
     useEffect(() => {
         fetchJobs()
         const storeCompanyToken = localStorage.getItem("companyToken")
-        if(storeCompanyToken){
+        if (storeCompanyToken) {
             setCompanyToken(storeCompanyToken)
         }
     }, [])
 
-    useEffect(()=>{
+    useEffect(() => {
         if (companyToken) {
             fetchCompanyData()
         }
-    },[companyToken])
+    }, [companyToken])
 
     const value = {
         searchFilter, setSearchFilter,

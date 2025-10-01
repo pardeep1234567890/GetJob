@@ -3,6 +3,7 @@ import bcrypt, { hash } from "bcrypt"
 import { v2 as cloudinary } from "cloudinary";
 import { generateToken } from "../utils/generateToken.js";
 import { PostJob } from "../models/postJob.model.js";
+import JobApplication from "../models/jobApplication.model.js";
 
 // Register a new company 
 export const registerCompany = async (req, res) => {
@@ -147,11 +148,15 @@ export const getCompanyJobApplicants = async (req, res) => {
 export const getCompanyPostedJobs = async (req, res) => {
             try {
                 const companyId = req.company._id
-                const jobs = await PostJob.find({companyId})
+                const jobs = await PostJob.find({companyId}) // Here find() is used to reterive all the data 
 
                 //add no. of applicants info in data
+                const jobsData = await Promise.all(jobs.map(async(job)=>{
+                    const applicants = await JobApplication.find({jobId:job._id})
+                    return {...job.toObject(),applicants:applicants.length}
+                }))
 
-                res.json({success:true , jobsData:jobs})
+                res.json({success:true , jobsData})
             } catch (error) {
                 res.json({success:false, message:error.message})
             }
@@ -177,7 +182,5 @@ export const changeVisibility = async (req, res) => {
     } catch (error) {
         res.json({success:false,message:error.message})
     }
-
-        const changeVisible = await PostJob.findById({id},{visible:false}) 
 
 }

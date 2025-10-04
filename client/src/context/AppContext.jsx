@@ -1,7 +1,7 @@
 import React, { useContext, createContext, useState, useEffect } from 'react'
-import { jobsData } from '../assets/assets';
 import { toast } from 'react-toastify';
 import axios from "axios"
+import { useAuth, useUser } from '@clerk/clerk-react';
 
 // here we created the context  
 export const AppContext = createContext()
@@ -10,6 +10,8 @@ export const AppContext = createContext()
 export const AppContextProvider = (props) => {
 
     const backend_url = import.meta.env.VITE_BACKEND_URL
+    const { user } = useUser()
+    const { getToken } = useAuth()
     const [searchFilter, setSearchFilter] = useState({
         title: '',
         location: ''
@@ -24,12 +26,30 @@ export const AppContextProvider = (props) => {
     const [companyData, setCompanyData] = useState(null)
 
     // Here we create the state to store the user data
-    const [userData , setUserData] = useState(null)
-    const [userApplications , setUserApplications] = useState([])
+    const [userData, setUserData] = useState(null)
+    const [userApplications, setUserApplications] = useState([])
+
+    //Function to fetch the user data 
+    const fetchUserData = async () => {
+        try {
+            const token = await getToken();
+            const {data} = await axios.get(backend_url + "/api/users/user",
+                { headers: { Authorization:`Bearer ${token}` } }
+            )
+            if (data.success) {
+                setUserData(data.user)
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
 
     // making a function to fetch the Jobs 
     const fetchJobs = async () => {
-         try {
+        try {
             const { data } = await axios.get(backend_url + "/api/jobs")
             if (data.success) {
                 setJobs(data.jobs)
@@ -61,6 +81,31 @@ export const AppContextProvider = (props) => {
         }
     }
 
+    // Function to fetch the user's applied applications data 
+    const fetchUserApplications = async () =>{
+       try {
+         const token = await getToken()
+         const {data} = await axios.get(backend_url+"/api/users/applications",
+            {headers:{Authorization:`Bearer ${token}`}}
+         )
+         if (data.success) {
+            setUserApplications(data.applications)
+         }else{
+            toast.error(data.message)
+         }
+       } catch (error) {
+            toast.error(error.message)
+       }
+        
+    }
+
+    useEffect(() => {
+        if (user) {
+            fetchUserData()
+            fetchUserApplications()
+        }
+    }, [user])
+
     useEffect(() => {
         fetchJobs()
         const storeCompanyToken = localStorage.getItem("companyToken")
@@ -82,7 +127,11 @@ export const AppContextProvider = (props) => {
         showRecuriterLogin, setShowRecuriterLogin,
         companyData, setCompanyData,
         companyToken, setCompanyToken,
-        backend_url
+        backend_url,
+        userData, setUserData,
+        userApplications, setUserApplications,
+        fetchUserData,
+        fetchUserApplications,
     }
     return (
         <AppContext.Provider value={value}>

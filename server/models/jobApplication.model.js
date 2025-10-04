@@ -13,7 +13,7 @@ const JobApplicationSchema = new mongoose.Schema({
     },
     jobId : {
         type : mongoose.Schema.Types.ObjectId,
-        ref:"Job",
+        ref:"PostJob",
         required:true
     },
     status : {

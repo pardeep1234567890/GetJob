@@ -141,7 +141,7 @@ export const postJob = async (req, res) => {
 
 // Get company Job Applicants 
 export const getCompanyJobApplicants = async (req, res) => {
-
+    
 }
 
 // Get Company Posted Job 

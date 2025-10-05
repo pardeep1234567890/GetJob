@@ -8,39 +8,46 @@ import { AppContext } from '../context/AppContext';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useEffect } from 'react';
 
 function Applications() {
-  const {user} = useUser()
-  const {getToken} = useAuth()
+  const { user } = useUser()
+  const { getToken } = useAuth()
   const [isEdit, setIsEdit] = useState(false);
   // here we create the state variable to save the data 
   const [resume, setResume] = useState(null)
 
-  const { backend_url,userData,  userApplications, fetchUserData} = useContext(AppContext)
+  const { backend_url, userData, userApplications, fetchUserData, fetchUserApplications } = useContext(AppContext)
 
   // Function to add update resume
-  const updateResume = async ()=>{
+  const updateResume = async () => {
     try {
       const formData = new FormData()
-      formData.append("resume" , resume)
+      formData.append("resume", resume)
       const token = await getToken()
 
-      const {data} = await axios.post(backend_url+"/api/users/update-resume",
+      const { data } = await axios.post(backend_url + "/api/users/update-resume",
         formData,
-        {headers:{Authorization:`Bearer ${token}`}}
+        { headers: { Authorization: `Bearer ${token}` } }
       )
       if (data.success) {
-          toast.success(data.message)
-          await fetchUserData()
-        }else{
-          toast.error(data.message)
-        }
+        toast.success(data.message)
+        await fetchUserData()
+      } else {
+        toast.error(data.message)
+      }
     } catch (error) {
       toast.error(error.message)
     }
     setIsEdit(false)
     setResume(null)
   }
+
+  useEffect(() => {
+    if (user) {
+      fetchUserApplications()
+    }
+  }, [user])
   return (
     <>
       <Navbar />
@@ -48,10 +55,10 @@ function Applications() {
         <h2 className='text-xl font-semibold'>Your Resume</h2>
         <div className='flex gap-2 mb-6 mt-3 '>
           {
-            isEdit || userData && userData.resume === "" ? 
+            isEdit || userData && userData.resume === "" ?
               <>
                 <label className='flex items-center' htmlFor="resumeUpload">
-                  <p className='bg-blue-100 text-blue-600 px-6 py-2 rounded-lg mr-2 '>{resume?resume.name : "Select Resume"} </p>
+                  <p className='bg-blue-100 text-blue-600 px-6 py-2 rounded-lg mr-2 '>{resume ? resume.name : "Select Resume"} </p>
                   <input id='resumeUpload' onChange={e => setResume(e.target.files[0])} accept='application/pdf' type="file" hidden />
                   <img src={assets.profile_upload_icon} alt="" />
                 </label>
@@ -59,7 +66,7 @@ function Applications() {
               </>
               :
               <div className='flex gap-2'>
-                <a className='bg-blue-100 text-blue-600 px-4 py-2  rounded-lg' href="">Resume</a>
+                <a target="_blank" href={userData.resume} className='bg-blue-100 text-blue-600 px-4 py-2  rounded-lg' >Resume</a>
                 <button onClick={() => setIsEdit(true)} className='text-gray-500 border border-gray-300 rounded-lg px-4 py-2 '>Edit</button>
               </div>
           }
@@ -86,7 +93,7 @@ function Applications() {
                 <td className='py-2 px-4  border-b max-sm:hidden'>{job.jobId.location}</td>
                 <td className='py-2 px-4  border-b'>{moment(job.date).format('ll')}</td>
                 <td className='py-2 px-4  border-b'>
-                  <span className={`${job.status ==='Accepted'?'bg-green-100' : job.status === 'Rejected' ? 'bg-red-100': 'bg-blue-100' } px-4 py-1.5 rounded`}>
+                  <span className={`${job.status === 'Accepted' ? 'bg-green-100' : job.status === 'Rejected' ? 'bg-red-100' : 'bg-blue-100'} px-4 py-1.5 rounded`}>
                     {job.status}
                   </span>
                 </td>
@@ -95,7 +102,7 @@ function Applications() {
           </tbody>
         </table>
       </div>
-      <Footer/>
+      <Footer />
     </>
   )
 }

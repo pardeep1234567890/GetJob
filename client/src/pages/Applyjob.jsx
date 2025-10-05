@@ -126,7 +126,7 @@ function Applyjob() {
               {jobs.filter(job => job._id !== jobData._id && job.companyId._id === jobData.companyId._id)
                 .filter(job => {
                   // here we get the set of applied job id's 
-                  const appliedJobIds = new Set(userApplications.map(app=> app.jobId && app.jobId._id ))
+                  const appliedJobIds = new Set(userApplications.map(app => app.jobId && app.jobId._id))
                   // return true if the user has not already applied for this job 
                   return !appliedJobIds.has(job._id)    // it returns the not applied job Id's 
                 }).slice(0, 4)

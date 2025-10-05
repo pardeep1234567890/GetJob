@@ -28,17 +28,17 @@ function JobListing() {
   }
 
   // Here we use the useEffect to Filter the Jobs after Selecting the category and location
-  useEffect(()=>{
+  useEffect(() => {
     const matchesCategory = job => selectedCategories.length === 0 || selectedCategories.includes(job.category)
     const matchesLocation = job => selectedLocations.length === 0 || selectedLocations.includes(job.location)
-    const matchTitle = job => searchFilter.title === "" || job.title.toLowerCase().includes(searchFilter.title.toLowerCase()) 
+    const matchTitle = job => searchFilter.title === "" || job.title.toLowerCase().includes(searchFilter.title.toLowerCase())
     const matchesSearchLocation = job => searchFilter.location === "" || job.location.toLowerCase().includes(searchFilter.location.toLowerCase())
     const newFilteredJobs = jobs.slice().reverse().filter(
       job => matchesCategory(job) && matchesLocation(job) && matchTitle(job) && matchesSearchLocation(job)
     )
     setFilteredJobs(newFilteredJobs)
     setCurrentPage(1);
-  },[jobs,selectedCategories,selectedLocations,searchFilter])
+  }, [jobs, selectedCategories, selectedLocations, searchFilter])
 
   return (
     <div className='container 2xl:px-20 mx-auto flex flex-col lg:flex-row max-lg:space-y-8 py-8'>
@@ -82,7 +82,7 @@ function JobListing() {
                   <input
                     className='scale-125'
                     type="checkbox"
-                    onChange={()=>handleCategoryChange(category)}
+                    onChange={() => handleCategoryChange(category)}
                     checked={selectedCategories.includes(category)} />
                   {category}
                 </li>
@@ -100,7 +100,7 @@ function JobListing() {
                 <li className='flex gap-3 items-center' key={index}>    {/* we use key here because the react needs a unique key prop for each element in a list to efficiently track and update element */}
                   <input className='scale-125'
                     type="checkbox"
-                    onChange={()=>handleLocationChange(location)}
+                    onChange={() => handleLocationChange(location)}
                     checked={selectedLocations.includes(location)} />
                   {location}
                 </li>

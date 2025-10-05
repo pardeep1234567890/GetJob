@@ -16,22 +16,22 @@ function AddJob() {
   const editorRef = useRef(null)    // this points the actual HTML container (div)
   const quillRef = useRef(null)     // this points the Quill Editor 
   //by using the editorRef we initialize the quillRef
-  const {backend_url,companyToken} = useContext(AppContext)
-  
+  const { backend_url, companyToken } = useContext(AppContext)
+
   const onSubmitHandler = async (e) => {
     e.preventDefault()
     try {
-      const description =  quillRef.current.root.innerHTML
-      const {data} = await axios.post(backend_url+ "/api/company/post-job" ,
-        {title , description,category,location,level,salary},
-        {headers:{token:companyToken}}
+      const description = quillRef.current.root.innerHTML
+      const { data } = await axios.post(backend_url + "/api/company/post-job",
+        { title, description, category, location, level, salary },
+        { headers: { token: companyToken } }
       )
       if (data.success) {
         toast.success(data.message)
         setTitle("")
         setSalary(0)
         quillRef.current.root.innerHTML = ""
-      }else{
+      } else {
         toast.error(data.message)
       }
     } catch (error) {
